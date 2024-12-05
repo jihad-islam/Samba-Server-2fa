@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shared Folder Files</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Flowbite for additional UI components -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            animation: {
+              "gradient-x": "gradient-x 15s ease infinite",
+              "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            },
+            keyframes: {
+              "gradient-x": {
+                "0%, 100%": { "background-position": "0% 50%" },
+                "50%": { "background-position": "100% 50%" },
+              },
+            },
+          },
+        },
+        plugins: [require("daisyui")],
+      };
+    </script>
+    <!-- Custom CSS for refined effects -->
+    <style>
+      body {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+      }
+      body::-webkit-scrollbar {
+        width: 8px;
+      }
+      body::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-gray-900 via-black to-gray-900 text-gray-200 min-h-screen flex flex-col overflow-x-hidden selection:bg-pink-500 selection:text-white"
+  >
+    <!-- Enhanced Banner Section with Refined Gradient -->
+    <div
+      class="banner w-full bg-gradient-to-br from-[#130B17] via-[#1D1525] to-[#251633] backdrop-blur-lg shadow-2xl px-6 py-5 relative flex flex-col gap-4 md:flex-row md:justify-between md:items-center border-b border-gray-700/30 animate-pulse-slow"
+    >
+      <!-- Left Section with Username -->
+      <div
+        class="text-sm md:text-lg font-medium text-white truncate hover:text-blue-300 transition-colors group"
+      >
+        Logged in as:
+        <span
+          class="text-blue-400 font-semibold group-hover:tracking-wider transition-all duration-300"
+          >{{ username }}</span
+        >
+      </div>
+
+      <!-- Responsive Title with Gradient Animation -->
+      <h2
+        class="absolute left-1/2 transform -translate-x-1/2 hidden md:block text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-yellow-500 animate-gradient-x background-size-400% text-center"
+      >
+        Samba Server
+      </h2>
+
+      <h2
+        class="md:hidden text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-yellow-500 animate-gradient-x background-size-400% text-center"
+      >
+        Samba Server
+      </h2>
+
+      <!-- Right Section with Enhanced Layout -->
+      <div
+        class="flex flex-col sm:flex-wrap sm:flex-row justify-between gap-4 w-full md:w-auto md:flex-row md:items-center"
+      >
+        <!-- Search Bar with Enhanced Focus and Corrected Icon Position -->
+
+        <!-- Search Bar with Sharp Icon -->
+        <div class="relative w-full sm:w-64">
+          <!-- Search Icon -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-pink-300 opacity-40 stroke-current stroke-[2] drop-shadow-lg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+
+          <!-- Search Input -->
+          <input
+            id="searchInput"
+            type="text"
+            placeholder="Search files..."
+            class="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-xl px-4 py-2 shadow-lg outline-none focus:ring-4 focus:ring-pink-500 pl-10"
+          />
+        </div>
+
+        <!-- <div class="relative w-full sm:w-64">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="absolute left-3 top-1/2 -translate-y-1/2 h-6 w-6 text-white opacity-80 hover:opacity-100 transition-opacity stroke-current stroke-[2]"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+          <input
+            id="searchInput"
+            type="text"
+            placeholder="Search files..."
+            class="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 text-white text-sm rounded-xl px-4 py-2 shadow-lg outline-none focus:ring-4 focus:ring-pink-500/50 z-10 transition-all duration-300 hover:bg-gray-800/70 pl-10"
+          />
+        </div> -->
+
+        <div class="flex justify-between gap-4 w-full sm:w-auto">
+          <!-- Upload Button with Enhanced Hover Effect -->
+          <label
+            for="uploadFile"
+            class="p-3 bg-gradient-to-r from-purple-600 via-pink-600 to-yellow-600 hover:from-yellow-600 hover:to-purple-600 rounded-full shadow-xl hover:shadow-pink-500/50 transition transform hover:scale-110 flex-grow sm:flex-grow-0 text-center group relative overflow-hidden"
+            title="Upload File"
+          >
+            <div
+              class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-20 transition-opacity"
+            ></div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 text-white inline-block group-hover:rotate-6 transition-transform"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M16 12l-4-4m0 0l-4 4m4-4v12"
+              />
+            </svg>
+          </label>
+          <input
+            type="file"
+            id="uploadFile"
+            style="display: none"
+            onchange="handleFileUpload(event)"
+          />
+
+          <!-- Logout Button with Refined Gradient -->
+          <button
+            id="logoutButton"
+            class="bg-gradient-to-r from-red-600/70 to-red-800/70 hover:from-red-700/80 hover:to-red-900/80 text-white px-6 py-3 rounded-lg font-medium text-sm transition flex-grow sm:flex-grow-0 shadow-md hover:shadow-xl relative overflow-hidden group"
+          >
+            <div
+              class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-20 transition-opacity"
+            ></div>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Bars (Unchanged from previous version) -->
+    <div
+      id="uploadProgressContainer"
+      class="fixed bottom-5 right-5 bg-gray-900/90 rounded-lg shadow-lg flex items-center gap-4 px-4 py-2 hidden z-50"
+    >
+      <div class="flex-1">
+        <div class="h-2 bg-gray-700 rounded">
+          <div
+            id="uploadProgress"
+            class="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 rounded transition-all"
+            style="width: 0%"
+          ></div>
+        </div>
+        <p class="text-xs text-gray-300 mt-1 text-center" id="uploadPercentage">
+          0%
+        </p>
+      </div>
+    </div>
+
+    <div
+      id="downloadProgressContainer"
+      class="fixed bottom-5 right-5 bg-gray-900/90 rounded-lg shadow-lg flex items-center gap-4 px-4 py-2 hidden z-50"
+    >
+      <div class="flex-1">
+        <div class="h-2 bg-gray-700 rounded">
+          <div
+            id="downloadProgress"
+            class="h-full bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 rounded transition-all"
+            style="width: 0%"
+          ></div>
+        </div>
+        <p
+          class="text-xs text-gray-300 mt-1 text-center"
+          id="downloadPercentage"
+        >
+          0%
+        </p>
+      </div>
+    </div>
+
+    <!-- Shared Folder Files Section with Enhanced Design -->
+    <div class="container mx-auto mt-12 md:mt-28 px-4 md:px-8">
+      <div
+        class="p-4 md:p-6 bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-700/30"
+      >
+        <!-- Upload Status Message -->
+        <div
+          id="uploadMessage"
+          class="text-center mb-4 text-xs md:text-sm text-gray-300 animate-pulse"
+        ></div>
+
+        <!-- File List with Enhanced Grid and Hover Effects -->
+        <ul
+          id="fileList"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+        >
+          {% if items %} {% for item in items %}
+          <li
+            class="bg-black/50 backdrop-blur-sm border border-gray-700/30 p-3 md:p-4 rounded-2xl shadow-md hover:shadow-2xl hover:scale-105 transition transform group relative overflow-hidden"
+          >
+            <!-- Subtle Gradient Overlay with Enhanced Interaction -->
+            <div
+              class="absolute inset-0 bg-gradient-to-br from-transparent via-gray-800/20 to-transparent opacity-50 group-hover:opacity-70 transition-opacity pointer-events-none"
+            ></div>
+
+            <!-- Icon and File/Folder Name with Refined Typography -->
+            <div class="flex items-center gap-3 md:gap-4 relative z-10">
+              <img
+                src="{{ url_for('static', filename='icons/folder.png') if item.type == 'folder' else url_for('static', filename='icons/file.png') }}"
+                alt="{{ item.type }} icon"
+                class="h-8 w-8 md:h-10 md:w-10 filter brightness-125 group-hover:rotate-6 transition-transform"
+              />
+              <div
+                class="text-xs md:text-sm lg:text-base font-medium text-white truncate break-words max-w-[75%] group-hover:text-pink-300 transition-colors"
+                title="{{ item.name }}"
+              >
+                {{ item.name }}
+              </div>
+            </div>
+
+            {% if item.type == 'file' %}
+            <!-- Modern Download Button with Enhanced Interaction -->
+            <div class="mt-2 md:mt-4 flex justify-end relative z-10">
+              <button
+                onclick="handleDownload('{{ item.name }}')"
+                class="p-2 bg-gradient-to-r from-purple-600/70 via-pink-600/70 to-yellow-600/70 hover:from-yellow-600/80 hover:to-purple-600/80 rounded-full transition shadow-md hover:shadow-xl group/download relative overflow-hidden"
+                title="Download File"
+              >
+                <div
+                  class="absolute inset-0 bg-white/10 opacity-0 group-hover/download:opacity-20 transition-opacity"
+                ></div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 md:h-6 md:w-6 text-white group-hover/download:scale-110 transition-transform"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 16v-8m0 8l-4-4m4 4l4-4m-7 8h10a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2z"
+                  />
+                </svg>
+              </button>
+            </div>
+            {% endif %}
+          </li>
+          {% endfor %} {% else %}
+          <div class="col-span-full text-center">
+            <p
+              class="text-yellow-400/80 text-sm md:text-base bg-black/30 py-6 rounded-xl"
+            >
+              {{ message or "No files found in the shared folder." }}
+            </p>
+          </div>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <!-- Flowbite for additional UI interactions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+  </body>
+</html>

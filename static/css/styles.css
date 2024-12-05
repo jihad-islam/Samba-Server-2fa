@@ -1,0 +1,164 @@
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #1c1c1c, #2e2e2e); /* Dark gradient background */
+    color: #ecf0f1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    background-size: 400% 400%; /* For color shifting animation */
+    animation: gradientShift 15s ease infinite; /* Smooth shifting of gradient */
+}
+
+/* Gradient Color Shifting */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Geometric Patterns */
+@keyframes geometricPatterns {
+    0% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+.geometric-pattern {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(231, 76, 60, 0.2); /* Soft red pattern */
+    animation: geometricPatterns 10s linear infinite;
+    opacity: 0.3;
+    z-index: -1;
+}
+
+/* Login Container */
+.login-container {
+    background: rgba(0, 0, 0, 0.7); /* Transparent dark background */
+    backdrop-filter: blur(10px); /* Frosted glass effect */
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+    transition: box-shadow 0.3s ease;
+}
+
+/* Welcome Text Animation */
+.welcome-text h1 {
+    font-size: 2.5em;
+    background: linear-gradient(90deg, #e74c3c, #f39c12, #2ecc71); /* Accent gradient colors */
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: textGradient 4s infinite alternate;
+    margin-bottom: 30px;
+}
+
+/* Gradient Text Animation */
+@keyframes textGradient {
+    0% {
+        background-position: 0%;
+    }
+    100% {
+        background-position: 100%;
+    }
+}
+
+/* Input Fields Styling */
+.input-group {
+    margin: 20px 0;
+    position: relative;
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 15px;
+    border-radius: 15px;
+    border: 1px solid #444;
+    outline: none;
+    font-size: 16px;
+    background-color: #333;
+    color: #ecf0f1;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    border: 1px solid #e74c3c;
+    background-color: #444;
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.5); /* Red glow effect */
+}
+
+/* Submit Button Styling */
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 15px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.submit-btn:hover {
+    background-color: #c0392b; /* Darker red on hover */
+    transform: translateY(-3px); /* Slight hover animation */
+}
+
+/* Message Area */
+#message {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #f39c12;
+}
+
+/* Links Styling */
+/* .links {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+} */
+
+/* added code  */
+.hidden {
+  display: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .login-container {
+        width: 80%;
+    }
+}

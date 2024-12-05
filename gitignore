@@ -1,0 +1,63 @@
+# Ignore all directories starting with a dot
+.*
+
+# Allow certain hidden files (if needed)
+!.gitignore
+!.env  # Uncomment this line if you want to track `.env`
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django specific
+*.log
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+
+# Environment variables file
+.env
+
+# VS Code settings
+.vscode/
+*.code-workspace
+
+# MacOS files
+.DS_Store
+
+# Windows files
+Thumbs.db
+desktop.ini
+
+# Coverage reports
+htmlcov/
+.coverage
+*.cover
+*.py,cover
+coverage.xml
+*.coveragerc
+
+# Migrations
+*/migrations/*
+
+# pytest
+.cache/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# PyCharm
+.idea/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Build files
+build/
+dist/
+*.egg-info/
+*.eggs/

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Samba Login</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+  </head>
+  <body>
+    <!-- Geometric Pattern -->
+    <div class="geometric-pattern"></div>
+    <div class="login-container">
+      <div class="welcome-text">
+        <h1>Welcome to Samba Server</h1>
+      </div>
+
+      <!-- Login Form -->
+      <div class="login-form" id="loginFormContainer">
+        <form id="loginForm">
+          <div class="input-group">
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Enter your username"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          <button type="submit" class="submit-btn">Login</button>
+          <div id="message"></div>
+        </form>
+      </div>
+
+      <!-- OTP Form -->
+      <div class="otp-form hidden" id="otpFormContainer">
+        <form id="otpForm">
+          <div class="input-group">
+            <input
+              type="text"
+              id="otp"
+              name="otp"
+              placeholder="Enter OTP"
+              required
+              maxlength="6"
+            />
+          </div>
+          <button type="submit" class="submit-btn">Verify OTP</button>
+          <div id="otpMessage"></div>
+        </form>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+  </body>
+</html>

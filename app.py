@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 import random
 import smtplib
 from email.mime.text import MIMEText
-from datetime import datetime, timedelta 
+from datetime import datetime, timedelta
+import time 
 
 load_dotenv()
 
@@ -14,6 +15,10 @@ app = Flask(__name__)
 # app.secret_key = 'your_secret_key' 
 app.secret_key = os.getenv('SECRET_KEY', 'your_secret_key')
 
+# Login attempt tracking
+LOGIN_ATTEMPTS = {}
+MAX_ATTEMPTS = 5
+LOCKOUT_DURATION = 60  # 1 minute lockout
 
 USER_EMAIL_MAPPING = {
     "sambauser": "jihadislam.diu@gmail.com",
@@ -96,12 +101,22 @@ def home():
 
 
 # Login functionality
-# Login functionality
+# Modified login functionality
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
     username = data['username']
     password = data['password']
+
+    # Check if user is currently locked out
+    if username in LOGIN_ATTEMPTS:
+        attempt_data = LOGIN_ATTEMPTS[username]
+        if attempt_data['locked_until'] and time.time() < attempt_data['locked_until']:
+            remaining_lockout = int(attempt_data['locked_until'] - time.time())
+            return jsonify({
+                'message': f'Account locked. Try again after {remaining_lockout} seconds',
+                'locked': True
+            }), 403
 
     # Get the current IP address of the Samba server
     server_ip = get_server_ip()
@@ -114,7 +129,11 @@ def login():
         result = subprocess.run(command, capture_output=True, text=True)
 
         if result.returncode == 0:
-            # Successful login
+            # Successful login - reset attempts
+            if username in LOGIN_ATTEMPTS:
+                del LOGIN_ATTEMPTS[username]
+            
+            # Successful login, send OTP
             success, otp_message = generate_and_send_otp(username)
             if success:
                 session['username'] = username
@@ -125,14 +144,37 @@ def login():
             else:
                 return jsonify({'message': otp_message}), 500
         else:
-            # Failed login
-            return jsonify({'message': 'Invalid username or password'}), 400
+            # Failed login attempt
+            if username not in LOGIN_ATTEMPTS:
+                LOGIN_ATTEMPTS[username] = {
+                    'attempts': 0,
+                    'locked_until': None
+                }
+            
+            LOGIN_ATTEMPTS[username]['attempts'] += 1
+            
+            # Check if max attempts reached
+            if LOGIN_ATTEMPTS[username]['attempts'] >= MAX_ATTEMPTS:
+                # Lock the account
+                LOGIN_ATTEMPTS[username]['locked_until'] = time.time() + LOCKOUT_DURATION
+                return jsonify({
+                    'message': f'Too many failed attempts. Try again after {LOCKOUT_DURATION} seconds',
+                    'locked': True,
+                    'remaining_time': LOCKOUT_DURATION
+                }), 403
+            
+            # Calculate remaining attempts
+            remaining_attempts = MAX_ATTEMPTS - LOGIN_ATTEMPTS[username]['attempts']
+            
+            return jsonify({
+                'message': f'Invalid username or password. {remaining_attempts} attempts remaining',
+                'remaining_attempts': remaining_attempts
+            }), 400
     
     except Exception as e:
         # Log the error and return a generic message
         print(f"Login error: {e}")
         return jsonify({'message': 'Invalid username or password'}), 500
-
 
 # Existing code for get_server_ip(), generate_and_send_otp(), etc. remains the same
 

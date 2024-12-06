@@ -73,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Existing Login functionality
+  // Modify the existing login form submission handler
   document
     .getElementById("loginForm")
     ?.addEventListener("submit", async function (e) {
@@ -97,12 +98,23 @@ document.addEventListener("DOMContentLoaded", () => {
         setButtonLoading(button, false);
 
         if (!response.ok) {
-          messageDiv.textContent =
-            result.message || "Invalid username or password";
-          messageDiv.style.color = "red";
+          // Handle different scenarios of failed login
+          if (result.locked) {
+            // Account is locked
+            messageDiv.textContent = result.message;
+            messageDiv.style.color = "red";
+          } else if (result.remaining_attempts !== undefined) {
+            // Show remaining attempts
+            messageDiv.textContent = result.message;
+            messageDiv.style.color = "red";
+          } else {
+            // Generic error
+            messageDiv.textContent =
+              result.message || "Invalid username or password";
+            messageDiv.style.color = "red";
+          }
         } else if (result.otp_required) {
           // OTP flow
-          // Update the part where OTP form is shown
           loginFormContainer.classList.add("animate-slideOut");
           setTimeout(() => {
             loginFormContainer.classList.add("hidden");

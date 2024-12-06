@@ -73,7 +73,34 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Existing Login functionality
-  // Modify the existing login form submission handler
+  function startLockoutCountdown(remainingTime) {
+    const timerElement = document.getElementById("message");
+
+    function updateTimer() {
+      if (remainingTime <= 0) {
+        clearInterval(lockoutInterval);
+        timerElement.textContent = "";
+        timerElement.classList.remove("text-red-500");
+        return;
+      }
+
+      timerElement.textContent = `Account locked. Try again after ${remainingTime} seconds`;
+      timerElement.classList.add("text-red-500");
+
+      remainingTime--;
+    }
+
+    // Initial call to set text immediately
+    updateTimer();
+
+    // Start the interval
+    const lockoutInterval = setInterval(updateTimer, 1000);
+
+    // Return the interval so it can be cleared if needed
+    return lockoutInterval;
+  }
+
+  // Modify the login form submission handler
   document
     .getElementById("loginForm")
     ?.addEventListener("submit", async function (e) {
@@ -101,8 +128,13 @@ document.addEventListener("DOMContentLoaded", () => {
           // Handle different scenarios of failed login
           if (result.locked) {
             // Account is locked
-            messageDiv.textContent = result.message;
-            messageDiv.style.color = "red";
+            // Start lockout countdown if remaining time is available
+            if (result.remaining_time) {
+              startLockoutCountdown(result.remaining_time);
+            } else {
+              messageDiv.textContent = result.message;
+              messageDiv.style.color = "red";
+            }
           } else if (result.remaining_attempts !== undefined) {
             // Show remaining attempts
             messageDiv.textContent = result.message;
@@ -114,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
             messageDiv.style.color = "red";
           }
         } else if (result.otp_required) {
-          // OTP flow
+          // OTP flow (existing code)
           loginFormContainer.classList.add("animate-slideOut");
           setTimeout(() => {
             loginFormContainer.classList.add("hidden");

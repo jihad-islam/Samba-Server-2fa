@@ -115,7 +115,8 @@ def login():
             remaining_lockout = int(attempt_data['locked_until'] - time.time())
             return jsonify({
                 'message': f'Account locked. Try again after {remaining_lockout} seconds',
-                'locked': True
+                'locked': True,
+                'remaining_time': remaining_lockout  # Add this line
             }), 403
 
     # Get the current IP address of the Samba server

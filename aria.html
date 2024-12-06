@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Existing head content -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Samba Server Login</title>
+    <!-- Add security-related meta tags -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://cdn.tailwindcss.com https://cdn.jsdelivr.net/npm/daisyui@2.0.0"
+    />
+  </head>
+  <body>
+    <!-- Existing body content -->
+    <div
+      class="bg-black bg-opacity-75 backdrop-blur-lg rounded-3xl p-12 max-w-md w-full text-center"
+    >
+      <form id="loginForm" class="space-y-6">
+        <!-- Add hidden CSRF token field -->
+        <input type="hidden" id="csrfToken" name="csrf_token" value="" />
+
+        <!-- Existing username and password inputs -->
+        <div>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Username"
+            class="w-full p-4 bg-[#333333] text-[#ecf0f1] border-2 border-[#444444] rounded-xl"
+            required
+            autocomplete="username"
+          />
+        </div>
+        <div>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            class="w-full p-4 bg-[#333333] text-[#ecf0f1] border-2 border-[#444444] rounded-xl"
+            required
+            autocomplete="current-password"
+          />
+        </div>
+
+        <!-- Add login attempts remaining indicator -->
+        <div id="loginAttemptsRemaining" class="text-sm text-yellow-500 hidden">
+          Login attempts remaining: <span id="attemptsCount">5</span>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full p-4 bg-[#e74c3c] text-white rounded-xl"
+        >
+          Login
+        </button>
+
+        <div
+          id="message"
+          class="mt-4 text-[#f39c12] text-sm min-h-[1.5rem]"
+        ></div>
+      </form>
+    </div>
+  </body>
+</html>

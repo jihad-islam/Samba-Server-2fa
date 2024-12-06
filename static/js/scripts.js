@@ -102,12 +102,19 @@ document.addEventListener("DOMContentLoaded", () => {
           messageDiv.style.color = "red";
         } else if (result.otp_required) {
           // OTP flow
+          // Update the part where OTP form is shown
           loginFormContainer.classList.add("animate-slideOut");
           setTimeout(() => {
             loginFormContainer.classList.add("hidden");
             otpFormContainer.classList.remove("hidden");
             otpFormContainer.classList.add("animate-slideIn");
             sessionStorage.setItem("username", username);
+
+            // Start the OTP countdown
+            const otpTimerInterval = startOTPCountdown();
+
+            // Optional: Clear interval if user navigates away or OTP is verified
+            sessionStorage.setItem("otpTimerInterval", otpTimerInterval);
           }, 500);
         } else {
           window.location.href = "/shared_folders";
@@ -121,6 +128,42 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   // Existing OTP Verification Functionality
+
+  function startOTPCountdown() {
+    const timerElement = document.getElementById("otpExpirationTimer");
+    let remainingTime = 1 * 60; // 5 minutes in seconds
+
+    function updateTimer() {
+      const minutes = Math.floor(remainingTime / 60);
+      const seconds = remainingTime % 60;
+
+      // Format time with leading zeros
+      const formattedMinutes = minutes.toString().padStart(2, "0");
+      const formattedSeconds = seconds.toString().padStart(2, "0");
+
+      timerElement.textContent = `OTP will expire in ${formattedMinutes}:${formattedSeconds}`;
+
+      if (remainingTime <= 0) {
+        clearInterval(timerInterval);
+        timerElement.textContent = "OTP has expired. Please request a new one.";
+        timerElement.classList.remove("text-yellow-500");
+        timerElement.classList.add("text-red-500");
+      }
+
+      remainingTime--;
+    }
+
+    // Initial call to set text immediately
+    updateTimer();
+
+    // Start the interval
+    const timerInterval = setInterval(updateTimer, 1000);
+
+    // Return the interval so it can be cleared if needed
+    return timerInterval;
+  }
+
+  // Modify the existing OTP form submission code
   document
     .getElementById("otpForm")
     ?.addEventListener("submit", async function (e) {

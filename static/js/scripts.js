@@ -1,66 +1,167 @@
 let fullFileList = []; // Store the full list of files and folders
 
-// Login functionality
-document
-  .getElementById("loginForm")
-  ?.addEventListener("submit", async function (e) {
-    e.preventDefault();
+// my code
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm");
+  const otpForm = document.getElementById("otpForm");
+  const loginFormContainer = document.getElementById("loginFormContainer");
+  const otpFormContainer = document.getElementById("otpFormContainer");
+  const loginButton = loginForm.querySelector("button");
+  const passwordInput = document.getElementById("password");
 
-    const response = await fetch("/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
+  // Password Visibility Toggle
+  function createPasswordToggle() {
+    const toggleBtn = document.createElement("button");
+    toggleBtn.innerHTML = "👁️";
+    toggleBtn.className =
+      "absolute right-4 top-1/2 transform -translate-y-1/2 text-[#7f8c8d] hover:text-[#ecf0f1] transition-colors";
+    toggleBtn.type = "button";
+    toggleBtn.addEventListener("click", () => {
+      passwordInput.type =
+        passwordInput.type === "password" ? "text" : "password";
+      toggleBtn.innerHTML = passwordInput.type === "password" ? "👁️" : "👁️‍🗨️";
     });
 
-    const result = await response.json();
-    const messageDiv = document.getElementById("message");
-    messageDiv.textContent = result.message;
-    messageDiv.style.color = response.ok ? "green" : "red";
+    const inputWrapper = document.createElement("div");
+    inputWrapper.className = "relative";
+    passwordInput.parentNode.insertBefore(inputWrapper, passwordInput);
+    inputWrapper.appendChild(passwordInput);
+    inputWrapper.appendChild(toggleBtn);
 
-    if (response.ok && result.otp_required) {
-      // Hide login form, show OTP form
-      document.getElementById("loginFormContainer").classList.add("hidden");
-      document.getElementById("otpFormContainer").classList.remove("hidden");
+    return toggleBtn;
+  }
 
-      // Store username for OTP verification
-      sessionStorage.setItem("username", username);
-    } else if (response.ok) {
-      // Direct login success
-      window.location.href = "/shared_folders";
+  // Particle Background Effect
+  function createParticleBackground() {
+    const particlesContainer = document.createElement("div");
+    particlesContainer.className =
+      "particle-background fixed inset-0 z-[-1] overflow-hidden";
+    document.body.appendChild(particlesContainer);
+
+    const particleCount = 50;
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement("div");
+      particle.className = "absolute rounded-full bg-white/10 animate-particle";
+      particle.style.width = `${Math.random() * 5}px`;
+      particle.style.height = particle.style.width;
+      particle.style.left = `${Math.random() * 100}%`;
+      particle.style.top = `${Math.random() * 100}%`;
+      particle.style.animationDuration = `${10 + Math.random() * 20}s`;
+      particle.style.animationDelay = `${Math.random() * 10}s`;
+      particlesContainer.appendChild(particle);
     }
-  });
+  }
 
-// OTP Verification Functionality
-document
-  .getElementById("otpForm")
-  ?.addEventListener("submit", async function (e) {
-    e.preventDefault();
+  // Animated Login Button with Loading State
+  function setButtonLoading(button, isLoading) {
+    if (isLoading) {
+      button.disabled = true;
+      button.innerHTML = `
+                <span class="flex items-center justify-center">
+                    <svg class="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                </span>
+            `;
+    } else {
+      button.disabled = false;
+      button.innerHTML = button.dataset.originalText || "Login";
+    }
+  }
 
-    const otp = document.getElementById("otp").value;
-    const username = sessionStorage.getItem("username");
+  // Existing Login functionality
+  document
+    .getElementById("loginForm")
+    ?.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const button = e.target.querySelector("button");
+      setButtonLoading(button, true);
 
-    const response = await fetch("/verify-otp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, otp }),
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const messageDiv = document.getElementById("message");
+
+      try {
+        const response = await fetch("/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const result = await response.json();
+        setButtonLoading(button, false);
+
+        if (!response.ok) {
+          messageDiv.textContent =
+            result.message || "Invalid username or password";
+          messageDiv.style.color = "red";
+        } else if (result.otp_required) {
+          // OTP flow
+          loginFormContainer.classList.add("animate-slideOut");
+          setTimeout(() => {
+            loginFormContainer.classList.add("hidden");
+            otpFormContainer.classList.remove("hidden");
+            otpFormContainer.classList.add("animate-slideIn");
+            sessionStorage.setItem("username", username);
+          }, 500);
+        } else {
+          window.location.href = "/shared_folders";
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        messageDiv.textContent = "Network error. Please try again.";
+        messageDiv.style.color = "red";
+        setButtonLoading(button, false);
+      }
     });
 
-    const result = await response.json();
-    const messageDiv = document.getElementById("otpMessage");
-    messageDiv.textContent = result.message;
-    messageDiv.style.color = response.ok ? "green" : "red";
+  // Existing OTP Verification Functionality
+  document
+    .getElementById("otpForm")
+    ?.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const button = e.target.querySelector("button");
+      setButtonLoading(button, true);
 
-    if (response.ok) {
-      window.location.href = "/shared_folders";
-    }
+      const otp = document.getElementById("otp").value;
+      const username = sessionStorage.getItem("username");
+
+      const response = await fetch("/verify-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, otp }),
+      });
+
+      const result = await response.json();
+      const messageDiv = document.getElementById("otpMessage");
+      messageDiv.textContent = result.message;
+      messageDiv.style.color = response.ok ? "green" : "red";
+
+      setButtonLoading(button, false);
+
+      if (response.ok) {
+        window.location.href = "/shared_folders";
+      }
+    });
+
+  // Store original button text
+  loginForm.querySelectorAll("button").forEach((btn) => {
+    btn.dataset.originalText = btn.innerHTML;
   });
+
+  // Create password toggle and particle background
+  const passwordToggle = createPasswordToggle();
+  createParticleBackground();
+});
+
+// Existing search, file upload/download, and other functions remain the same...
 
 // Load shared files
 async function loadSharedFiles() {

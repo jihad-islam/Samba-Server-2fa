@@ -6,15 +6,15 @@ from dotenv import load_dotenv
 import random
 import smtplib
 from email.mime.text import MIMEText
-from datetime import datetime, timedelta # For setting session timeout
+from datetime import datetime, timedelta 
 
-# Load environment variables from a .env file (if needed)
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Required for session management (use a secure key in production)
+# app.secret_key = 'your_secret_key' 
+app.secret_key = os.getenv('SECRET_KEY', 'your_secret_key')
 
-# Temporary mapping of usernames to emails
+
 USER_EMAIL_MAPPING = {
     "sambauser": "jihadislam.diu@gmail.com",
 }
@@ -94,6 +94,8 @@ def home():
         return redirect(url_for('shared_folders'))
     return render_template('login.html')  # Login page for users
 
+
+# Login functionality
 # Login functionality
 @app.route('/login', methods=['POST'])
 def login():
@@ -112,16 +114,27 @@ def login():
         result = subprocess.run(command, capture_output=True, text=True)
 
         if result.returncode == 0:
-            success, message = generate_and_send_otp(username)
+            # Successful login
+            success, otp_message = generate_and_send_otp(username)
             if success:
                 session['username'] = username
-                return jsonify({'message': 'OTP sent. Please verify.', 'otp_required': True})
+                return jsonify({
+                    'message': 'OTP sent. Please verify.', 
+                    'otp_required': True
+                })
             else:
-                return jsonify({'message': message}), 500
+                return jsonify({'message': otp_message}), 500
         else:
-            return jsonify({'message': 'Incorrect username or password!'}), 400
+            # Failed login
+            return jsonify({'message': 'Invalid username or password'}), 400
+    
     except Exception as e:
-        return jsonify({'message': f"Error: {str(e)}"}), 500
+        # Log the error and return a generic message
+        print(f"Login error: {e}")
+        return jsonify({'message': 'Invalid username or password'}), 500
+
+
+# Existing code for get_server_ip(), generate_and_send_otp(), etc. remains the same
 
 def generate_and_send_otp(username):
     # Update your email configuration

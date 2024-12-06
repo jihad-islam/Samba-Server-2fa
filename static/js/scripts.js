@@ -218,26 +218,58 @@ document.addEventListener("DOMContentLoaded", () => {
       const otp = document.getElementById("otp").value;
       const username = sessionStorage.getItem("username");
 
-      const response = await fetch("/verify-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, otp }),
-      });
+      try {
+        const response = await fetch("/verify-otp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, otp }),
+        });
 
-      const result = await response.json();
-      const messageDiv = document.getElementById("otpMessage");
-      messageDiv.textContent = result.message;
-      messageDiv.style.color = response.ok ? "green" : "red";
+        const result = await response.json();
+        const messageDiv = document.getElementById("otpMessage");
+        messageDiv.textContent = result.message;
+        messageDiv.style.color = response.ok ? "green" : "red";
 
-      setButtonLoading(button, false);
+        setButtonLoading(button, false);
 
-      if (response.ok) {
-        window.location.href = "/shared_folders";
+        if (response.ok) {
+          window.location.href = "/shared_folders"; // Ensure redirect on success
+        }
+      } catch (error) {
+        console.error("OTP Verification Error:", error);
+        setButtonLoading(button, false);
+        // Show an error message instead of redirecting
+        const messageDiv = document.getElementById("otpMessage");
+        messageDiv.textContent = "Network error. Please try again.";
+        messageDiv.style.color = "red";
       }
     });
 
+  // Add this function to handle page refresh during OTP stage
+  function checkLoginStage() {
+    // Only run this check on OTP and shared folders pages
+    if (
+      window.location.pathname === "/shared_folders" ||
+      document.getElementById("otpFormContainer")
+    ) {
+      fetch("/check-login-stage")
+        .then((response) => {
+          if (!response.ok) {
+            // If login stage is not valid, redirect to login
+            window.location.href = "/";
+          }
+        })
+        .catch(() => {
+          // Network error or other issues - redirect to login
+          window.location.href = "/";
+        });
+    }
+  }
+
+  // Run the check when the page loads
+  document.addEventListener("DOMContentLoaded", checkLoginStage);
   // Store original button text
   loginForm.querySelectorAll("button").forEach((btn) => {
     btn.dataset.originalText = btn.innerHTML;
@@ -247,6 +279,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const passwordToggle = createPasswordToggle();
   createParticleBackground();
 });
+
+// Add this function to check OTP verification status
+async function checkOTPVerificationStatus() {
+  try {
+    const response = await fetch("/check-otp-status");
+    if (!response.ok) {
+      // If OTP is not verified, redirect to login
+      window.location.href = "/";
+    }
+  } catch (error) {
+    // In case of error, redirect to login
+    window.location.href = "/";
+  }
+}
+
+// Call this function on pages that require OTP verification
+if (window.location.pathname === "/shared_folders") {
+  checkOTPVerificationStatus();
+}
 
 // Existing search, file upload/download, and other functions remain the same...
 
@@ -602,3 +653,4 @@ document
       alert("Error logging out: " + error.message);
     }
   });
+  

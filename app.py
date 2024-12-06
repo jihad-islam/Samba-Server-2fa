@@ -67,6 +67,10 @@ def generate_and_send_otp(username):
 
 @app.route('/verify-otp', methods=['POST'])
 def verify_otp():
+    # Check if login stage is correct
+    if 'login_stage' not in session or session['login_stage'] != 'otp_pending':
+        return jsonify({'message': 'Invalid session. Please login again.'}), 400
+
     data = request.json
     username = data.get('username')
     user_otp = data.get('otp')
@@ -82,6 +86,11 @@ def verify_otp():
         datetime.now() < stored_otp_data['expires_at']):
         # Clear the OTP after successful verification
         del otp_store[username]
+        
+        # Set OTP verification flag in session
+        session['otp_verified'] = True
+        session['login_stage'] = 'authenticated'
+        
         return jsonify({'message': 'OTP verified successfully!'})
     
     return jsonify({'message': 'Invalid or expired OTP.'}), 400
@@ -93,12 +102,16 @@ def get_server_ip():
 # Shared folder path on your Samba server
 SHARED_FOLDER_PATH = "/home/sambauser/shared_folder"  # Update with your actual Samba shared folder path
 
+# @app.route('/')
+# def home():
+#     if 'username' in session:
+#         return redirect(url_for('shared_folders'))
+#     return render_template('login.html')  # Login page for users
 @app.route('/')
 def home():
-    if 'username' in session:
-        return redirect(url_for('shared_folders'))
-    return render_template('login.html')  # Login page for users
-
+    # Clear any existing session when landing on home page
+    session.clear()
+    return render_template('login.html')
 
 # Login functionality
 # Modified login functionality
@@ -130,14 +143,16 @@ def login():
         result = subprocess.run(command, capture_output=True, text=True)
 
         if result.returncode == 0:
-            # Successful login - reset attempts
-            if username in LOGIN_ATTEMPTS:
-                del LOGIN_ATTEMPTS[username]
+            # Clear any previous session data
+            session.clear()
             
             # Successful login, send OTP
             success, otp_message = generate_and_send_otp(username)
             if success:
+                # Set temporary session data for OTP flow
                 session['username'] = username
+                session['login_stage'] = 'otp_pending'
+                
                 return jsonify({
                     'message': 'OTP sent. Please verify.', 
                     'otp_required': True
@@ -215,10 +230,26 @@ def generate_and_send_otp(username):
         print(f"Email sending error: {e}")
         return False, f"Failed to send OTP: {str(e)}"
 
+@app.route('/check-otp-status')
+def check_otp_status():
+    if 'username' not in session or not session.get('otp_verified', False):
+        return jsonify({'verified': False}), 401
+    return jsonify({'verified': True})
+
+@app.route('/check-login-stage')
+def check_login_stage():
+    # Check if the current login stage is valid
+    if ('username' not in session or 
+        session.get('login_stage') not in ['otp_pending', 'authenticated']):
+        return jsonify({'valid': False}), 401
+    return jsonify({'valid': True})
 
 @app.route('/shared_folders')
 def shared_folders():
-    if 'username' not in session:
+    # if 'username' not in session:
+    #     return redirect(url_for('home'))
+    if ('username' not in session or 
+        session.get('login_stage') != 'authenticated'):
         return redirect(url_for('home'))
     
     username = session['username']
